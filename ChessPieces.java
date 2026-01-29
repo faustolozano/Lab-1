@@ -15,7 +15,6 @@ public class ChessPiece{
         this.pos_Y = pos_Y;
     }
     
-    }
     public String getPieceName(){
         return piece_name;
     }
@@ -24,7 +23,7 @@ public class ChessPiece{
         return pos_X;
     }
 
-    public iny getPosY(){
+    public int getPosY(){
         return pos_Y;
     }
 
@@ -38,36 +37,36 @@ public class ChessPiece{
         int currX = convertX(pos_X);
         int targetX = convertX(newX);
 
-        if (targetX < 0 || targetX > 7 || newY < 0 || newY > 7){
+        if (targetX < 0 || targetX > 7 || newY < 1 || newY > 8){
             return false;
         }
 
-        if (currX == targetX && newY ==posY){
+        if (currX == targetX && newY == pos_Y){
             return false;
         }
 
         if (piece_name.equalsIgnoreCase("king")){
-            return kingMove(currX, posY, targetX, newY);
+            return kingMove(currX, pos_Y, targetX, newY);
         }
 
         else if (piece_name.equalsIgnoreCase("rook")){
-            return rookMove(currX, posY, targetX, newY);
+            return rookMove(currX, pos_Y, targetX, newY);
         }
 
         else if (piece_name.equalsIgnoreCase("queen")){
-            return queenMove(currX, posY, targetX, newY);
+            return queenMove(currX, pos_Y, targetX, newY);
         }
 
         else if (piece_name.equalsIgnoreCase("bishop")){
-            return bishopMove(currX, posY, targetX, newY);
+            return bishopMove(currX, pos_Y, targetX, newY);
         }
 
         else if (piece_name.equalsIgnoreCase("knight")){
-            return knightMove(currX, posY, targetX, newY);
+            return knightMove(currX, pos_Y, targetX, newY);
         }
 
         else if (piece_name.equalsIgnoreCase("pawn")){
-            return pawnMove(currX, posY, targetX, newY);
+            return pawnMove(currX, pos_Y, targetX, newY);
         }
 
         return false;
@@ -87,7 +86,7 @@ public class ChessPiece{
     }
 
     private boolean queenMove(int x, int y, int newX, int newY){
-        return rookMove(x, y, newX, newY) || bishopMove(pos_x, pos_Y, newX, newY);
+        return rookMove(x, y, newX, newY) || bishopMove(x, y, newX, newY);
     }
 
     private boolean knightMove(int x, int y, int newX, int newY){
@@ -101,6 +100,7 @@ public class ChessPiece{
             return x == newX && newY == y + 1;
         }
         else{
-            return y == newX && newY == y - 1;
+            return x == newX && newY == y - 1;
         }
+    }
 }
