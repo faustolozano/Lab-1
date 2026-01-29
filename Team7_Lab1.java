@@ -13,9 +13,7 @@ Fausto Lozano
 
 01/27/2026:
 Victoria Santana & Marisol Anaya Molina
-- Created chesspieces class
-- Crated getters
-- Created the validation method
+- Created the validation logic
 - Crated pieces movements
 - Created file scanner
 
@@ -34,70 +32,148 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-public class Team7_Lab1{
-    
-    
+public class Team7_Lab1 {
     /* Asks the user for a file name and a target chessboard position,
      * reads chess piece data from the file, creates chess piece objects,
      * and verifies whether each piece can move to the target position.
      */
     public static void main(String[] args) {
 
-        // Prompt user for the input file name
         Scanner scan = new Scanner(System.in);
-        System.out.println("Enter file's name: ");
-        String fileName = scan.nextLine();
 
-        // File object representing the input file
+        // Asks user for the input file name
+        System.out.print("Enter file's name: ");
+        String fileName = scan.nextLine();
         File file = new File(fileName);
 
-        try (Scanner fileReader = new Scanner(file)) {
-            // Asks user for the target position on the chessboard
-            System.out.print("Enter target position (x,y): ");
-            char targetX = scan.next().charAt(0);
-            int targetY = scan.nextInt();
+        int count = 0;
 
-            System.out.println();
-            
-            // Read the file line by line
-            while (fileReader.hasNextLine()){
-                String line = fileReader.nextLine().trim();
-                // Skip empty lines
-                if (line.isEmpty()){
-                    continue;
+        // Count number of lines to create array
+        try {
+            Scanner counter = new Scanner(file);
+            while (counter.hasNextLine()) {
+                String line = counter.nextLine().trim();
+                if (!line.isEmpty()) {
+                    count++;
                 }
-                // Split line into parts
+            }
+            counter.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found.");
+            return;
+        }
+
+        // Create array that will store the pieces
+        ChessPiece[] pieces = new ChessPiece[count];
+
+        // Read file and fills array
+        try {
+            Scanner reader = new Scanner(file);
+            int index = 0;
+
+            while (reader.hasNextLine()) {
+                String line = reader.nextLine().trim();
+                if (line.isEmpty()) continue;
+
                 String[] data = line.split(",");
-                // Skip invalid lines
-                if (data.length < 4) {
-                    continue;
-                }
+                if (data.length < 4) continue;
 
-                // Extract chess piece attributes
-                String piece_name = data[0].trim();
-                String color = data[1].trim();
-                char pos_X = data[2].trim().charAt(0);
-                int pos_Y = Integer.parseInt(data[3].trim());
-                
-                // Create a ChessPieces object using the extracted data
-                ChessPieces piece = new ChessPieces(piece_name, color, pos_X, pos_Y);
+                pieces[index++] = new ChessPiece(
+                        data[0].trim(),
+                        data[1].trim(),
+                        Character.toUpperCase(data[2].trim().charAt(0)),
+                        Integer.parseInt(data[3].trim())
+                );
+            }
+            reader.close();
+        } 
+        
+        catch (FileNotFoundException e) {
+            // Handles case where the file cannot be found
+            System.out.println("File not found.");
+            return;
+        } 
+        
+        catch (NumberFormatException e) {
+            // Handles invalid numeric values in the input file
+            System.out.println("Error parsing number from file.");
+            return;
+        }
 
-                // Check if this piece can move to the target
-                if (piece.canMove(targetX, targetY)) {
-                    System.out.println(piece.getPieceName() + " at " + piece.getPosX() + ", " + piece.getPosY() +" can move to " + targetX + ", " + targetY);
-                } else {
-                    System.out.println(piece.getPieceName() + " at " + piece.getPosX() + ", " + piece.getPosY() +" can NOT move to " + targetX + ", " + targetY);
+        // Asks user for the target position on the chessboard
+        System.out.print("Enter target position (x, y): ");
+        char targetX = Character.toUpperCase(scan.next().charAt(0));
+        int targetY = scan.nextInt();
+
+        // Traverse array to verify move
+        for (int i = 0; i < pieces.length; i++) {
+
+            ChessPiece p = pieces[i];
+            boolean canMove = true;
+
+            char xChar = Character.toUpperCase(p.pos_x);
+
+            int x = xChar - 'A';
+            int newX = targetX - 'A';
+            int y = p.pos_y;
+            int newY = targetY;
+
+            // Check if it's inside the board
+            if (x < 0 || x > 7 || y < 1 || y > 8 ||
+                newX < 0 || newX > 7 || newY < 1 || newY > 8) {
+
+                canMove = false;
+            } else {
+
+                // Determine movement based on piece type
+                switch (p.name.toLowerCase()) {
+
+                    case "king":
+                        canMove = Math.abs(newX - x) <= 1 && Math.abs(newY - y) <= 1;
+                        break;
+
+                    case "queen":
+                        canMove = (Math.abs(newX - x) == Math.abs(newY - y)) ||
+                                  (x == newX || y == newY);
+                        break;
+
+                    case "rook":
+                        canMove = x == newX || y == newY;
+                        break;
+
+                    case "bishop":
+                        canMove = Math.abs(newX - x) == Math.abs(newY - y);
+                        break;
+
+                    case "knight":
+                        int dx = Math.abs(newX - x);
+                        int dy = Math.abs(newY - y);
+                        canMove = (dx == 2 && dy == 1) || (dx == 1 && dy == 2);
+                        break;
+
+                    case "pawn":
+                        if (p.color.equalsIgnoreCase("white")) {
+                            canMove = x == newX && newY == y + 1;
+                        } else {
+                            canMove = x == newX && newY == y - 1;
+                        }
+                        break;
+
+                    default:
+                        canMove = false;
                 }
             }
 
-            scan.close();
-
-        } catch (FileNotFoundException e) {
-            // Handles case where the file cannot be found
-            System.out.println("File not found.");
-        } catch (NumberFormatException e) {
-            // Handles invalid numeric values in the input file
-            System.out.println("Error parsing number from file.");
+            // Output
+            if (canMove) {
+                System.out.println(p.name + " at " + p.pos_x + ", " + p.pos_y +
+                        " can move to " + targetX + ", " + targetY);
+            } else {
+                System.out.println(p.name + " at " + p.pos_x + ", " + p.pos_y +
+                        " can NOT move to " + targetX + ", " + targetY);
+            }
         }
+
+        scan.close();
     }
 }
