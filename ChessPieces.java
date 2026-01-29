@@ -1,4 +1,4 @@
-public class ChessPiece{
+public class ChessPieces{
 
     //attributes
     private String piece_name;
