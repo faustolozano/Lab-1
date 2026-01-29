@@ -29,7 +29,7 @@ public class ChessPiece{
     }
 
     private int convertX(char x){
-        return CHaracter.toUpperCase(x) - 'A';
+        return Character.toUpperCase(x) - 'A';
     }
 
 
