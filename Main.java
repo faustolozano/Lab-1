@@ -1,11 +1,27 @@
 /* Fausto Lozano, Marisol Anaya Molina, Victoria Santana 
 [CS 3331] Lab 1: Programming skills assessment
+
 This work reads a list of chess pieces and their positions from a file and determines whether each piece can 
 legally move to a user-specified target position on an 8×8 chessboard. Movement validation follows standard 
 chess rules for each piece, assuming the board contains only the piece being evaluated.
 
 Change log:
 
+01/23/2026:
+Fausto Lozano
+- Created main class basic structure
+
+01/27/2026:
+Victoria Santana & Marisol Anaya Molina
+- Created chesspieces class
+- Crated getters
+- Created the validation method
+- Crated pieces movements
+- Created file scanner
+
+01/28/2026:
+Victoria Santana:
+- Changed file reader
 
 01/29/2026:
 Fausto Lozano
