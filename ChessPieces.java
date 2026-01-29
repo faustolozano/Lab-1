@@ -1,6 +1,6 @@
 public class ChessPieces{
 
-    //attributes
+    // Attributes
     private String piece_name;
     private String color;
     private char pos_X;
@@ -8,7 +8,7 @@ public class ChessPieces{
 
 
 
-    public ChessPiece(String piece_name, String color, char pos_X, int pos_Y){
+    public ChessPieces(String piece_name, String color, char pos_X, int pos_Y){
         this.piece_name = piece_name;
         this.color = color;
         this.pos_X = pos_X;
